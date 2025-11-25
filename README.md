@@ -1,6 +1,6 @@
 # MyChat — chat global com Firebase Firestore
 
-App Android (Java + AndroidX) simples e direto: login/registro com Firebase Auth e chat em tempo real via Cloud Firestore.
+App Android (Java + AndroidX) simples e direto: login/registo com Firebase Auth e chat em tempo real via Cloud Firestore.
 
 ## Destaques
 - Auth email/senha com displayName definido no registo (ou prefixo do email se faltar).
@@ -24,3 +24,4 @@ App Android (Java + AndroidX) simples e direto: login/registro com Firebase Auth
 - `app/src/main/java/com/example/mychat/Message.java` — modelo da mensagem.
 - Layouts: `res/layout/activity_login.xml`, `activity_main.xml`, `item_message.xml`.
 - Gradle: `app/build.gradle.kts` usa Firebase BoM + Auth + Firestore.
+
