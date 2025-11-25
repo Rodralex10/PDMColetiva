@@ -25,6 +25,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * MainActivity é a tela principal do chat.
+ * Ela exibe a lista de mensagens e permite que o usuário envie novas mensagens.
+ * Verifica também se o usuário está logado; caso contrário, redireciona para o Login.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -40,8 +45,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Inicializa o Firebase
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
+
+        // Verifica se o usuário está logado. Se não estiver, vai para a tela de login.
         if (auth.getCurrentUser() == null) {
             goToLogin();
             return;
@@ -54,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
         Button buttonLogout = findViewById(R.id.buttonLogout);
         textUser = findViewById(R.id.textUser);
 
+        // Configura o RecyclerView e o Adapter para exibir mensagens
         adapter = new MessageAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
 
+        // Começa a escutar novas mensagens do Firestore em tempo real
         subscribeToMessages();
 
         buttonSend.setOnClickListener(view -> sendMessage());
@@ -68,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
         textUser.setText(getAccountName());
     }
 
+    /**
+     * Escuta a coleção "messages" no Firestore para atualizações em tempo real.
+     * Quando novas mensagens são adicionadas, a lista é atualizada automaticamente.
+     */
     private void subscribeToMessages() {
         db.collection("messages")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
@@ -92,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Envia a mensagem digitada para o Firestore.
+     */
     private void sendMessage() {
         String text = editTextMessage.getText().toString().trim();
 
@@ -101,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
         String sender = getAccountName();
 
+        // Cria o objeto Message. O timestamp será preenchido pelo servidor (se configurado) ou null por enquanto.
         Message msg = new Message(text, sender, null); // ServerTimestamp will populate timestamp
 
         db.collection("messages")
@@ -125,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
         goToLogin();
     }
 
+    /**
+     * Obtém o nome do usuário para exibição (Display Name, parte do email ou UID).
+     */
     private String getAccountName() {
         if (auth == null || auth.getCurrentUser() == null) return "Unknown";
         String display = auth.getCurrentUser().getDisplayName();
